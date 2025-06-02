@@ -1,0 +1,128 @@
+[33mcommit 2abf5b6a487b3cedc3524cbbfa30860b846addbf[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmaster[m[33m, [m[1;32mimplment_lay_complain_and_giving_recomendations_by_doctor_feature[m[33m)[m
+Author: unknown <Atuo Israel>
+Date:   Wed Feb 5 11:54:36 2025 +0000
+
+    Add the patient lay complain feature, and adjust the patient sideBar add by adding more and descriptive side links
+
+[33mcommit ea3c4356e1b0d2d926e10b556ea599f6646159de[m
+Author: David Maxwell <davemaxwell612@gmail.com>
+Date:   Fri Jan 24 23:18:12 2025 +0100
+
+    mockup for Services, Pricing
+    About Us
+    Contact Us completed
+
+[33mcommit a133280fcfbc3d1da448634dd92ae2ea3b146ca8[m
+Author: unknown <Atuo Israel>
+Date:   Fri Jan 24 03:22:49 2025 +0000
+
+    build for cpanel deployment
+
+[33mcommit 03bc11ec3f0d6ebaff24e588202238df9e2a4867[m
+Author: unknown <Atuo Israel>
+Date:   Fri Jan 24 02:32:14 2025 +0000
+
+    wire the guest layout to return the appropriate pages and set footer date to dynamically display current year and replace a tags with Link for inertia loading
+
+[33mcommit d9cf1e27232de650490d04101eab7759833ca2c5[m
+Merge: 3cd9eeb 6bc4da6
+Author: unknown <Atuo Israel>
+Date:   Fri Jan 24 01:14:42 2025 +0000
+
+    commit changes to update the live version
+
+[33mcommit 3cd9eeba9d930c51ab94a6a57412ac346c713c23[m
+Author: unknown <Atuo Israel>
+Date:   Fri Jan 24 01:10:24 2025 +0000
+
+    adjust patients dashboard then add medical-history link so i can update the life version
+
+[33mcommit 6bc4da6388dc333fc1e077c5aec20d1f33ae2198[m
+Author: David Maxwell <davemaxwell612@gmail.com>
+Date:   Thu Jan 23 12:14:53 2025 +0100
+
+    added team members slider
+
+[33mcommit ccc632f7c3337b7f06908d9fa016a3a12e1fdaca[m
+Author: David Maxwell <davemaxwell612@gmail.com>
+Date:   Wed Jan 22 10:47:31 2025 +0100
+
+    added carousel
+
+[33mcommit f9f8ccda7cdf27e4ad8eb7c7e91d71b249191012[m[33m ([m[1;32mmain[m[33m, [m[1;32madd_client_schedule_appointment_functionality[m[33m, [m[1;32maccept-and-save-patients-medical-history[m[33m)[m
+Author: unknown <Atuo Israel>
+Date:   Fri Jan 17 08:35:06 2025 +0000
+
+    create dashboard, admin add departments, add links and adjust doctor dashboard and admin can create a doctor
+
+[33mcommit 9efb4830f7c09b5d5d492c5fda577becddb98a67[m
+Author: unknown <Atuo Israel>
+Date:   Tue Jan 14 17:15:00 2025 +0000
+
+    Create dashboards for doctor, patient, and admin, add the book appointment page
+
+[33mcommit 1621745a2828ae1a10335262e4580f8d2c7556ba[m
+Author: unknown <Atuo Israel>
+Date:   Tue Jan 14 17:11:18 2025 +0000
+
+    Create dashboards for doctor, patient, and admin, add the book appointment page
+
+[33mcommit 51163cef2943e68143204e58496c2336a2815741[m
+Author: David Maxwell <davemaxwell612@gmail.com>
+Date:   Tue Jan 14 14:32:24 2025 +0100
+
+    Modified Navbar and home links
+
+[33mcommit a3acfffb00edcc1e74e4cb0a6d19e3828bb05425[m[33m ([m[1;32mcreate_doctors_dashboard[m[33m, [m[1;32mauthenticate_user_login_using_email_or_phone_number[m[33m)[m
+Author: unknown <Atuo Israel>
+Date:   Fri Jan 10 13:08:04 2025 +0000
+
+    Accept and Authenticate user login request with email or phone number
+
+[33mcommit a559aaaebae152bfc803128ef651e09a8949ff14[m
+Author: David Maxwell <davemaxwell612@gmail.com>
+Date:   Thu Jan 9 17:55:54 2025 +0100
+
+    Created Login Form
+
+[33mcommit 57d6561dd2a9311079743e847b2993d26c0579cc[m
+Author: unknown <Atuo Israel>
+Date:   Thu Jan 9 15:54:40 2025 +0000
+
+    Adjust the registration form design and wire the backend
+
+[33mcommit 73345bef818c0606dfe03f710222923471718668[m
+Author: David Maxwell <davemaxwell612@gmail.com>
+Date:   Wed Jan 8 18:18:53 2025 +0100
+
+    Registeration form layout complete
+
+[33mcommit 771398b6ce6abc3936dda11ca7a6c08318dc952a[m
+Author: David Maxwell <davemaxwell612@gmail.com>
+Date:   Tue Dec 31 00:10:14 2024 +0100
+
+    Landing page completed
+
+[33mcommit a1b011a859cd49347874c626126f05a975876cc7[m
+Author: David Maxwell <davemaxwell612@gmail.com>
+Date:   Mon Dec 30 23:31:36 2024 +0100
+
+    Navbar completed (with mobile verssion)
+
+[33mcommit 8a10b28e3013193caba776d711a5603bf15a85a3[m
+Author: David Maxwell <davemaxwell612@gmail.com>
+Date:   Mon Dec 30 18:20:50 2024 +0100
+
+    template structured
+
+[33mcommit ecc831bf4707f3c91ba9108c7fd470b4a4a3d592[m
+Author: David Maxwell <davemaxwell612@gmail.com>
+Date:   Tue Dec 24 14:31:59 2024 +0100
+
+    Navbar, welcome banner added
+
+[33mcommit 2f75460af5867703b60d652619c6565189d2292f[m
+Author: David Maxwell <davemaxwell612@gmail.com>
+Date:   Sat Dec 21 15:00:13 2024 +0100
+
+    Health Consultancy App Created
