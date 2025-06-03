@@ -1,11 +1,11 @@
 <template>
-    <AuthenticatedLayout>
+    <AuthenticatedLayout v-slot="{ planHasExpired }">
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 cursor-pointer">
             <div v-for="(link, index) in links" :key="index"
                  class=" bg-white p-6 rounded-2xl shadow-md hover:shadow-xl transition-shadow flex flex-col items-center text-center">
                 <div v-html="link.icon" class="w-10 h-10"></div>
                 <h3 class="text-xl font-semibold text-gray-800 mb-2">{{ capitalizeFirstLetter(link.name) }}</h3>
-                <Link :href="link.name" class="mt-4 px-6 py-2 bg-teal-900 text-white rounded-lg hover:bg-teal-800 transition">Visit</Link>
+                <Link :href="planHasExpired === 0 ? '/patient-available-plans' : `/${link.name}`" class="mt-4 px-6 py-2 bg-teal-900 text-white rounded-lg hover:bg-teal-800 transition">Visit</Link>
             </div>
         </div>
     </AuthenticatedLayout>
@@ -14,8 +14,8 @@
 
 <script setup>
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
-import {Link} from "@inertiajs/vue3";
-import {onMounted, ref} from "vue";
+import { Link, usePage } from "@inertiajs/vue3";
+import { onMounted, ref, computed } from "vue";
 
 let widthHight = ref('w-24 h-24')
 let strokeColor = ref('teal')
@@ -68,6 +68,8 @@ let capitalizeFirstLetter = (str) => {
     return words;
 }
 
+const page = usePage();
+const planHasExpired = computed(() => page.props.planHasExpired ?? 1);
 
 </script>
 

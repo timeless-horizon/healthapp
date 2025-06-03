@@ -5,6 +5,11 @@ import { onMounted } from 'vue';
 const { props } = usePage();
 
 onMounted(() => {
+
+    if (props.email_verified === false) {
+        window.location.href = '/verify-email'; // redirect if not verified
+        return;
+    }
     if (props.auth.user.user_role === 'admin') {
         window.location.href = '/admin-dashboard';
     } else if (props.auth.user.user_role === 'doctor') {

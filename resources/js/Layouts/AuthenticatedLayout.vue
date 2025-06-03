@@ -36,7 +36,7 @@
         <div class="relative px-3 py-12 m-0  min-h-screen w-full transition-all duration-300"
             :class="{ 'ml-0': !isSidebarOpen && !isLargeScreen, 'lg:ml-72': true }">
             <PlanHasExpiredNotification v-show="planHasExpired === 0" />
-            <slot></slot>
+            <slot :plan-has-expired="planHasExpired"></slot>
         </div>
     </div>
 </template>
