@@ -60,11 +60,11 @@ Route::middleware(['auth'])->group(function () {
         return Inertia::render('Dashboard', [
             'email_verified' => Auth::user()?->hasVerifiedEmail() ?? false,
         ]);
-        // return Inertia::render('Dashboard');
     })->name('dashboard');
 
+
     //    patient links >>>>>>>>>>>
-    Route::middleware(['auth', RoleMiddleware::class . ':patient'])->group(function () {
+    Route::middleware(['auth', 'verified', RoleMiddleware::class . ':patient'])->group(function () {
         Route::post('/patient-schedule-appointment', [PatientController::class, 'createAppointments']);
         Route::post('/patient-lay-complain', [PatientController::class, 'submitComplain']);
         Route::get('/patient-dashboard-overview', [PatientController::class, 'index'])->name('patient.dashboard');
@@ -96,7 +96,7 @@ Route::middleware(['auth'])->group(function () {
     });
 
     // Doctor's Links >>>>>>>>>>>>>>>>>>>>>>
-    Route::middleware(['auth', RoleMiddleware::class . ':doctor'])->group(function () {
+    Route::middleware(['auth', 'verified', RoleMiddleware::class . ':doctor'])->group(function () {
         Route::get('/view-record/{user_id}/{record_id}', [MedicalRecordsController::class, 'viewUserRecord']);
         // Route::get('/check-if-patient-plan-expires', [UserPlanController::class, 'getUserDashboardData']);
         Route::get('/doctor-dashboard-overview', [DoctorController::class, 'index'])->name('doctor.dashboard');
@@ -114,7 +114,7 @@ Route::middleware(['auth'])->group(function () {
     });
 
     //    Admin >>>>>>>>>>>
-    Route::middleware(['auth', RoleMiddleware::class . ':admin'])->group(function () {
+    Route::middleware(['auth', 'verified', RoleMiddleware::class . ':admin'])->group(function () {
         // Route::get('/check-if-patient-plan-expires', [UserPlanController::class, 'getUserDashboardData']);
         Route::get('/admin-dashboard', [AdminController::class, 'index']);
         Route::get('/admin-add-user', [AdminController::class, 'index'])->name('admin.dashboard');

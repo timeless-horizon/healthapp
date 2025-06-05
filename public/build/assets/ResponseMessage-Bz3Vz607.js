@@ -1,0 +1,1 @@
+import{g as p,o as r,t as a,u as n,n as t}from"./app-CXQy_847.js";const i={__name:"ResponseMessage",props:{response:String},setup(s){let e=s;return(o,l)=>(r(),p("p",{class:t([o.bg,"my-3 px-3 py-3 fixed top-0 z-50 w-full"])},a(n(e).response),3))}};export{i as _};

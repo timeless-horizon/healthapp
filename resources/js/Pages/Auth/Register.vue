@@ -28,7 +28,7 @@
                                 <label class="block text-gray-700">Gender</label>
                                 <select v-model="form.gender" class="bg-gray-50 w-full border-gray-300 rounded-md p-2"
                                     name="" id="">
-                                    <option selected disabled value="">Selection an option</option>
+                                    <option selected disabled value="">Select an option</option>
                                     <option value="male">Male</option>
                                     <option value="female">Female</option>
                                 </select>
@@ -332,7 +332,8 @@ const submitForm = async () => {
         });
         toast.success('Registration successful!');
         setTimeout(() => {
-            window.location.href = '/patient-dashboard-overview';
+            window.location.href = '/dashboard';
+            // window.location.href = '/patient-dashboard-overview';
         }, 1500);
     } catch (error) {
         if (error.response && error.response.status === 422) {
