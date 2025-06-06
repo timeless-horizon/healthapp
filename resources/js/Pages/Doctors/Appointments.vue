@@ -42,6 +42,7 @@
                 <table v-if="paginatedAppointments.length" class="w-full text-sm text-left text-gray-500 border">
                     <thead class="text-sm text-gray-700 uppercase bg-gray-50 font-semibold">
                         <tr>
+                            <th scope="col" class="px-6 py-3">S/N</th>
                             <th scope="col" class="px-6 py-3">Appointment Date/Time</th>
                             <th scope="col" class="px-6 py-3">Name</th>
                             <th scope="col" class="px-6 py-3">Reason</th>
@@ -53,6 +54,8 @@
                     <tbody>
                         <tr v-for="(appointment, index) in paginatedAppointments" :key="index"
                             class="odd:bg-white even:bg-gray-50">
+                            <td class="px-4 py-4 font-bold"> {{ (currentPage - 1) * itemsPerPage + index + 1 }}</td>
+                            
                             <td scope="row" class="px-4 py-4 font-normal text-sm text-gray-900">
                                 <span v-if="appointment.clients_date_and_time !== null">
                                     {{ formatDateTime(appointment.clients_date_and_time) }}

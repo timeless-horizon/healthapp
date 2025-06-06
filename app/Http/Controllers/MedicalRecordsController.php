@@ -11,6 +11,7 @@ use Faker\Provider\Medical;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use inertia\inertia;
+use Illuminate\Support\Facades\Mail;
 
 class MedicalRecordsController extends Controller
 {
@@ -25,7 +26,6 @@ class MedicalRecordsController extends Controller
                 ->with('user')
                 ->get(),
         ]);
-
     }
 
     public function userRecords()
@@ -39,7 +39,7 @@ class MedicalRecordsController extends Controller
                     return [
                         'id' => $record->id,
                         'user_id' => $record->user_id,
-                        'doctor_name' => $record->doctor->user->surname. ' '. $record->doctor->user->otherNames?? 'Unknown', // Extract doctor's name
+                        'doctor_name' => $record->doctor->user->surname . ' ' . $record->doctor->user->otherNames ?? 'Unknown', // Extract doctor's name
                         'diagnosis' => $record->diagnosis,
                         'medications' => $record->medications,
                         'test_result' => $record->test_result,
@@ -50,7 +50,6 @@ class MedicalRecordsController extends Controller
                     ];
                 }),
         ]);
-
     }
 
     /**
@@ -66,7 +65,7 @@ class MedicalRecordsController extends Controller
     {
         $viewedRecord = MedicalRecords::where('id', $record_id->id)->where('user_id', $user_id->id)->first();
 
-//dd($viewedRecord);
+        //dd($viewedRecord);
         return inertia::render('Doctors/ViewPatientRecord', [
             'record' => MedicalRecords::where('user_id', $user_id->id)
                 ->where('id', $record_id->id)
@@ -76,7 +75,7 @@ class MedicalRecordsController extends Controller
                     return [
                         'id' => $record->id,
                         'user_id' => $record->user_id,
-                        'doctor_name' => $record->doctor->user->surname. ' '. $record->doctor->user->otherNames?? 'Unknown', // Extract doctor's name
+                        'doctor_name' => $record->doctor->user->surname . ' ' . $record->doctor->user->otherNames ?? 'Unknown', // Extract doctor's name
                         'diagnosis' => $record->diagnosis,
                         'medications' => $record->medications,
                         'test_result' => $record->test_result,
@@ -92,39 +91,43 @@ class MedicalRecordsController extends Controller
     /**
      * Store a newly created resource in storage.
      */
+
     public function store(Request $request)
     {
-
         $validatedData = $request->validate([
             'user_id'     => 'required|exists:users,id',
-//            'doctor_id'   => 'required|exists:doctor_details,id',
             'diagnosis'   => 'required|string',
-            'conducted_on'   => 'required|date',
+            'conducted_on' => 'required|date',
             'medications' => 'nullable|string',
             'test_result' => 'required|string',
             'test_image'  => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'extra_notes' => 'nullable|string',
         ]);
 
-
-        $doctor = DoctorDetails::where('user_id', Auth::user()->id)->first();
+        $doctor = DoctorDetails::where('user_id', Auth::id())->first();
         $validatedData['doctor_id'] = $doctor->id;
-//        dd($doctor);
 
         if ($request->hasFile('test_image')) {
             $validatedData['test_image'] = $request->file('test_image')->store('test_images', 'public');
         }
 
-
         $validatedData['month'] = $request->input('month', now()->format('F'));
 
         $record = MedicalRecords::create($validatedData);
 
+        // ✅ Send medications to the user via email
+        $user = User::findOrFail($validatedData['user_id']);
+        $medications = $validatedData['medications'] ?? 'No medications provided';
+
+        Mail::raw("Dear {$user->name},\n\nYour prescribed medications are:\n\n{$medications}\n\nStay healthy,\nTimeless Healthcare", function ($message) use ($user) {
+            $message->to($user->email)
+                ->subject('Your Medications from Timeless Healthcare');
+        });
+
         return response()->json([
-            'message' => 'Medical record saved successfully',
+            'message' => 'Medical record saved and email sent successfully',
         ], 201);
     }
-
     /**
      * Display the specified resource.
      */

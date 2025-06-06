@@ -179,8 +179,6 @@ Route::middleware(['auth'])->group(function () {
 //     return 'User not found!';
 // });
 
-// Route::get('/verify-email', function () {
-//     return Inertia::render('Auth/VerifyEmail');
-// })->middleware('auth')->name('verification.notice');
+
 
 require __DIR__ . '/auth.php';

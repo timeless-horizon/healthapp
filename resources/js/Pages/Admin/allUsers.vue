@@ -8,6 +8,7 @@
                     <table v-if="paginatedAdminUsers.length" class="w-full text-sm text-left text-gray-500 border">
                         <thead class="text-sm text-gray-700 uppercase bg-gray-50 font-semibold">
                             <tr>
+                                <th scope="col" class="px-6 py-3">S/N</th>
                                 <th scope="col" class="px-6 py-3">Name</th>
                                 <th scope="col" class="px-6 py-3">Phone Number</th>
                                 <th scope="col" class="px-6 py-3">Email Address</th>
@@ -21,6 +22,7 @@
                         <tbody>
                             <tr v-for="(user, index) in paginatedAdminUsers" :key="index"
                                 class="odd:bg-white even:bg-gray-50">
+                                <td class="px-4 py-4 font-bold">{{ (adminPage - 1) * itemsPerPage + index + 1 }}</td>
                                 <td scope="row" class="px-4 py-4 font-normal text-sm text-gray-900">{{ user.surname }}
                                     {{ user.otherNames
                                     }}
@@ -69,6 +71,7 @@
                     <table v-if="paginatedDoctorUsers.length" class="w-full text-sm text-left text-gray-500 border">
                         <thead class="text-sm text-gray-700 uppercase bg-gray-50 font-semibold">
                             <tr>
+                                <th scope="col" class="px-6 py-3">S/N</th>
                                 <th scope="col" class="px-6 py-3">Name</th>
                                 <th scope="col" class="px-6 py-3">Phone Number</th>
                                 <th scope="col" class="px-6 py-3">Email Address</th>
@@ -82,6 +85,7 @@
                         <tbody>
                             <tr v-for="(user, index) in paginatedDoctorUsers" :key="index"
                                 class="odd:bg-white even:bg-gray-50">
+                                <td class="px-4 py-4 font-bold">{{ (doctorPage - 1) * itemsPerPage + index + 1 }}</td>
                                 <td scope="row" class="px-4 py-4 font-normal text-sm text-gray-900">{{ user.surname }}
                                     {{ user.otherNames
                                     }}
@@ -130,6 +134,7 @@
                     <table v-if="paginatedPatientUsers.length" class="w-full text-sm text-left text-gray-500 border">
                         <thead class="text-sm text-gray-700 uppercase bg-gray-50 font-semibold">
                             <tr>
+                                <th scope="col" class="px-6 py-3">S/N</th>
                                 <th scope="col" class="px-6 py-3">Name</th>
                                 <th scope="col" class="px-6 py-3">Phone Number</th>
                                 <th scope="col" class="px-6 py-3">Email Address</th>
@@ -143,6 +148,7 @@
                         <tbody>
                             <tr v-for="(user, index) in paginatedPatientUsers" :key="index"
                                 class="odd:bg-white even:bg-gray-50">
+                                <td class="px-4 py-4 font-bold">{{ (patientPage - 1) * itemsPerPage + index + 1 }}</td>
                                 <td scope="row" class="px-4 py-4 font-normal text-sm text-gray-900">{{ user.surname }}
                                     {{ user.otherNames
                                     }}
