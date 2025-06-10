@@ -22,7 +22,7 @@ class MedicalRecordsController extends Controller
     {
         return inertia::render('Doctors/MedicalRecord', [
             'records' => MedicalRecords::orderBy('created_at', 'DESC')
-                ->where('doctor_id', Auth::user()->id)
+                // ->where('doctor_id', Auth::user()->id)
                 ->with('user')
                 ->get(),
         ]);

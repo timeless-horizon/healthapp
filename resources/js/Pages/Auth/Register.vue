@@ -168,7 +168,7 @@
                         </div>
                         <div class="mb-4 flex items-start">
                             <input type="checkbox" v-model="form.termsAccepted" class="mr-2" />
-                            <label class="text-gray-700">I agree to the terms and conditions</label>
+                            <label class="text-gray-700">I agree to the <a href="https://mega.nz/file/lb1XkQDD#gB27ksTspCbpNN52gx34siiVaYZqok7YA0BKM1fmI04" target="blank" class="underline hover:text-blue-700">terms and conditions</a> </label>
                         </div>
                         <button type="submit" :disabled="loading"
                             class="w-full bg-blue-500 text-white py-2 rounded-md hover:bg-blue-600 disabled:bg-blue-300 flex items-center justify-center disabled:cursor-not-allowed">
