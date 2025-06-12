@@ -2,12 +2,43 @@
     <AuthenticatedLayout>
         <div class="flex flex-col p-4">
             <h1 class="text-3xl font-semibold text-teal-900 mb-4">Medical Records</h1>
-            <div class="w-full flex items-center justify-end mb-4">
+            <div class="w-full flex items-start justify-between mb-4">
+                <div class="flex flex-wrap gap-4">
+                    <div class="flex flex-col">
+                        <label class="text-sm text-gray-600 mb-1">Patient Name</label>
+                        <input v-model="filters.patientName" type="text" placeholder="Search patient..."
+                            class="border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-teal-600">
+                    </div>
+                    <div class="flex flex-col">
+                        <label class="text-sm text-gray-600 mb-1">Diagnosis</label>
+                        <input v-model="filters.diagnosis" type="text" placeholder="Search diagnosis..."
+                            class="border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-teal-600">
+                    </div>
+                    <div class="flex flex-col">
+                        <label class="text-sm text-gray-600 mb-1">Medications</label>
+                        <input v-model="filters.medications" type="text" placeholder="Search medications..."
+                            class="border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-teal-600">
+                    </div>
+                    <div class="flex flex-col">
+                        <label class="text-sm text-gray-600 mb-1">Test Result</label>
+                        <input v-model="filters.testResult" type="text" placeholder="Search test results..."
+                            class="border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-teal-600">
+                    </div>
+                    <div class="flex flex-col">
+                        <label class="text-sm text-gray-600 mb-1">Date Range</label>
+                        <div class="flex gap-2">
+                            <input v-model="filters.startDate" type="date"
+                                class="border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-teal-600">
+                            <input v-model="filters.endDate" type="date"
+                                class="border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-teal-600">
+                        </div>
+                    </div>
+                </div>
                 <Link href="/doctor-update-medical-records">
-                <button
-                    class="bg-gray-900 text-white py-2 px-6 rounded-lg hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-teal-600">
-                    Create a record
-                </button>
+                    <button
+                        class="bg-gray-900 text-white py-2 whitespace-nowrap px-6 rounded-lg hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-teal-600">
+                        Create a record
+                    </button>
                 </Link>
             </div>
             <div class="relative overflow-x-auto">
@@ -83,8 +114,41 @@ const props = defineProps({
 const currentPage = ref(1);
 const itemsPerPage = 10;
 
+const filters = ref({
+    patientName: '',
+    diagnosis: '',
+    medications: '',
+    testResult: '',
+    startDate: '',
+    endDate: ''
+});
+
+const filteredRecords = computed(() => {
+    return props.records.filter(record => {
+        const patientFullName = `${record.user.surname} ${record.user.otherNames}`.toLowerCase();
+        const matchesPatientName = !filters.value.patientName || 
+            patientFullName.includes(filters.value.patientName.toLowerCase());
+        
+        const matchesDiagnosis = !filters.value.diagnosis || 
+            (record.diagnosis && record.diagnosis.toLowerCase().includes(filters.value.diagnosis.toLowerCase()));
+        
+        const matchesMedications = !filters.value.medications || 
+            (record.medications && record.medications.toLowerCase().includes(filters.value.medications.toLowerCase()));
+        
+        const matchesTestResult = !filters.value.testResult || 
+            (record.test_result && record.test_result.toLowerCase().includes(filters.value.testResult.toLowerCase()));
+        
+        const recordDate = new Date(record.conducted_on);
+        const matchesStartDate = !filters.value.startDate || recordDate >= new Date(filters.value.startDate);
+        const matchesEndDate = !filters.value.endDate || recordDate <= new Date(filters.value.endDate);
+
+        return matchesPatientName && matchesDiagnosis && matchesMedications && 
+               matchesTestResult && matchesStartDate && matchesEndDate;
+    });
+});
+
 const sortedRecords = computed(() => {
-    return [...props.records].sort((a, b) => {
+    return [...filteredRecords.value].sort((a, b) => {
         return new Date(b.conducted_on) - new Date(a.conducted_on);
     });
 });
