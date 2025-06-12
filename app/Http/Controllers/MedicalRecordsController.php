@@ -119,10 +119,18 @@ class MedicalRecordsController extends Controller
         $user = User::findOrFail($validatedData['user_id']);
         $medications = $validatedData['medications'] ?? 'No medications provided';
 
-        Mail::raw("Dear {$user->name},\n\nYour prescribed medications are:\n\n{$medications}\n\nStay healthy,\nTimeless Healthcare", function ($message) use ($user) {
-            $message->to($user->email)
-                ->subject('Your Medications from Timeless Healthcare');
-        });
+        Mail::raw(
+            "Dear {$user->name},\n\n" .
+            "Thank you for using our service. Attached below is your medication prescription.\n\n" .
+            "{$medications}\n\n" .
+            "We appreciate your trust in us for your healthcare needs.\n\n" .
+            "If you have any further questions or need assistance, please don't hesitate to reach out.\n\n" .
+            "Stay healthy,\nTimeless Healthcare",
+            function ($message) use ($user) {
+                $message->to($user->email)
+                        ->subject('Your Medication Prescription from Timeless Healthcare');
+            }
+        );
 
         return response()->json([
             'message' => 'Medical record saved and email sent successfully',

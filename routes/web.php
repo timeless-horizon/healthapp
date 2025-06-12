@@ -25,6 +25,7 @@ use \App\Http\Controllers\PrivacyPolicyController;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Auth;
+use App\Http\Controllers\UserController;
 
 Route::get('/', function () {
     return Inertia::render('Welcome', [
@@ -130,6 +131,7 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/admin-fetch-appointments', [AdminController::class, 'fetchAppointments']);
         Route::get('/admin-users', [AdminController::class, 'viewAllUsers']);
         Route::delete('/users/{user}', [AdminController::class, 'destroyUser'])->name('users.destroy');
+        Route::put('/admin/users/{user}', [UserController::class, 'update'])->name('admin.users.update');
         Route::get('/admin-plans', [AdminController::class, 'viewAllPlans']);
         Route::delete('/plans/{plan}', [AdminController::class, 'destroy'])->name('plans.destroy');
         Route::get('/create-admin', [AdminController::class, 'createAdmin']);
