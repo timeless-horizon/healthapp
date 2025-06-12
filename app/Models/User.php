@@ -66,6 +66,13 @@ class User extends Authenticatable implements MustVerifyEmail
         return $this->hasOne(UserPlan::class)->latestOfMany();
     }
 
+    public function activePlan()
+    {
+        return $this->hasOne(UserPlan::class)
+            ->where('status', 1)
+            ->with('plan');
+    }
+
     public function getPlanStatusAttribute()
     {
         return $this->currentPlan?->status;

@@ -44,6 +44,42 @@
                 </div>
             </div>
 
+            <!-- Assign Plan Modal -->
+            <div v-if="showPlanModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full flex items-center z-50 justify-center">
+                <div class="relative p-5 border w-96 shadow-lg rounded-md bg-white">
+                    <div class="mt-3">
+                        <h3 class="text-lg font-medium leading-6 text-gray-900 mb-4">Assign Plan to User</h3>
+                        <form @submit.prevent="assignPlan" class="space-y-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700">Select Plan</label>
+                                <select v-model="selectedPlan.planId" required
+                                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-teal-500 focus:ring-teal-500">
+                                    <option value="">Select a plan</option>
+                                    <option v-for="plan in plans" :key="plan.id" :value="plan.id">
+                                        {{ plan.name }} - {{ plan.description }}
+                                    </option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700">Duration (months)</label>
+                                <input type="number" v-model="selectedPlan.duration" required min="1"
+                                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-teal-500 focus:ring-teal-500">
+                            </div>
+                            <div class="flex justify-end space-x-3 mt-4">
+                                <button type="button" @click="closePlanModal"
+                                    class="px-4 py-2 bg-gray-300 text-gray-700 rounded-md hover:bg-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-500">
+                                    Cancel
+                                </button>
+                                <button type="submit"
+                                    class="px-4 py-2 bg-teal-600 text-white rounded-md hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-teal-500">
+                                    Assign Plan
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
             <div class="mb-10">
                 <h2 class="text-2xl font-medium text-teal-800 mb-4">Admin Users</h2>
                 <!-- Admin Users Filter -->
@@ -80,6 +116,7 @@
                                 <th scope="col" class="px-6 py-3">Username</th>
                                 <th scope="col" class="px-6 py-3">State</th>
                                 <th scope="col" class="px-6 py-3">Country</th>
+                                <th scope="col" class="px-6 py-3">Current Plan</th>
                                 <th scope="col" class="px-6 py-3">Created</th>
                                 <th scope="col" class="px-6 py-3">Action</th>
                             </tr>
@@ -95,9 +132,18 @@
                                 <td scope="row" class="px-4 py-4 font-normal text-sm text-gray-900">{{ user.username }}</td>
                                 <td scope="row" class="px-4 py-4 font-normal text-sm text-gray-900">{{ user.state }}</td>
                                 <td scope="row" class="px-4 py-4 font-normal text-sm text-gray-900">{{ user.country }}</td>
+                                <td scope="row" class="px-4 py-4 font-normal text-sm text-gray-900">
+                                    <span v-if="user.active_plan" class="px-2 py-1 bg-green-100 text-green-800 rounded-full text-xs">
+                                        {{ user.active_plan.plan.name }}
+                                    </span>
+                                    <span v-else class="px-2 py-1 bg-gray-100 text-gray-800 rounded-full text-xs">
+                                        No Plan
+                                    </span>
+                                </td>
                                 <td scope="row" class="px-4 py-4 font-normal text-sm text-gray-900">{{ formatDate(user.created_at) }}</td>
                                 <td scope="row" class="px-4 py-4 font-normal text-sm">
                                     <button @click="openEditModal(user)" class="text-teal-600 hover:text-teal-800 mr-3">Edit</button>
+                                    <button @click="openPlanModal(user)" class="text-blue-600 hover:text-blue-800 mr-3">Assign Plan</button>
                                     <button @click="deleteUser(user.id)" class="text-red-500 hover:text-red-700">Delete</button>
                                 </td>
                             </tr>
@@ -161,6 +207,7 @@
                                 <th scope="col" class="px-6 py-3">Username</th>
                                 <th scope="col" class="px-6 py-3">State</th>
                                 <th scope="col" class="px-6 py-3">Country</th>
+                                <th scope="col" class="px-6 py-3">Current Plan</th>
                                 <th scope="col" class="px-6 py-3">Created</th>
                                 <th scope="col" class="px-6 py-3">Action</th>
                             </tr>
@@ -176,9 +223,18 @@
                                 <td scope="row" class="px-4 py-4 font-normal text-sm text-gray-900">{{ user.username }}</td>
                                 <td scope="row" class="px-4 py-4 font-normal text-sm text-gray-900">{{ user.state }}</td>
                                 <td scope="row" class="px-4 py-4 font-normal text-sm text-gray-900">{{ user.country }}</td>
+                                <td scope="row" class="px-4 py-4 font-normal text-sm text-gray-900">
+                                    <span v-if="user.active_plan" class="px-2 py-1 bg-green-100 text-green-800 rounded-full text-xs">
+                                        {{ user.active_plan.plan.name }}
+                                    </span>
+                                    <span v-else class="px-2 py-1 bg-gray-100 text-gray-800 rounded-full text-xs">
+                                        No Plan
+                                    </span>
+                                </td>
                                 <td scope="row" class="px-4 py-4 font-normal text-sm text-gray-900">{{ formatDate(user.created_at) }}</td>
                                 <td scope="row" class="px-4 py-4 font-normal text-sm">
                                     <button @click="openEditModal(user)" class="text-teal-600 hover:text-teal-800 mr-3">Edit</button>
+                                    <button @click="openPlanModal(user)" class="text-blue-600 hover:text-blue-800 mr-3">Assign Plan</button>
                                     <button @click="deleteUser(user.id)" class="text-red-500 hover:text-red-700">Delete</button>
                                 </td>
                             </tr>
@@ -242,6 +298,7 @@
                                 <th scope="col" class="px-6 py-3">Username</th>
                                 <th scope="col" class="px-6 py-3">State</th>
                                 <th scope="col" class="px-6 py-3">Country</th>
+                                <th scope="col" class="px-6 py-3">Current Plan</th>
                                 <th scope="col" class="px-6 py-3">Created</th>
                                 <th scope="col" class="px-6 py-3">Action</th>
                             </tr>
@@ -257,9 +314,18 @@
                                 <td scope="row" class="px-4 py-4 font-normal text-sm text-gray-900">{{ user.username }}</td>
                                 <td scope="row" class="px-4 py-4 font-normal text-sm text-gray-900">{{ user.state }}</td>
                                 <td scope="row" class="px-4 py-4 font-normal text-sm text-gray-900">{{ user.country }}</td>
+                                <td scope="row" class="px-4 py-4 font-normal text-sm text-gray-900">
+                                    <span v-if="user.active_plan" class="px-2 py-1 bg-green-100 text-green-800 rounded-full text-xs">
+                                        {{ user.active_plan.plan.name }}
+                                    </span>
+                                    <span v-else class="px-2 py-1 bg-gray-100 text-gray-800 rounded-full text-xs">
+                                        No Plan
+                                    </span>
+                                </td>
                                 <td scope="row" class="px-4 py-4 font-normal text-sm text-gray-900">{{ formatDate(user.created_at) }}</td>
                                 <td scope="row" class="px-4 py-4 font-normal text-sm">
                                     <button @click="openEditModal(user)" class="text-teal-600 hover:text-teal-800 mr-3">Edit</button>
+                                    <button @click="openPlanModal(user)" class="text-blue-600 hover:text-blue-800 mr-3">Assign Plan</button>
                                     <button @click="deleteUser(user.id)" class="text-red-500 hover:text-red-700">Delete</button>
                                 </td>
                             </tr>
@@ -300,6 +366,7 @@ import "vue3-toastify/dist/index.css";
 
 const props = defineProps({
     users: Object,
+    plans: Array,
 });
 
 const adminPage = ref(1);
@@ -495,6 +562,56 @@ const updateUser = () => {
         },
         onError: (errors) => {
             toast.error('Failed to update user');
+        }
+    });
+};
+
+// Plan assignment state
+const showPlanModal = ref(false);
+const selectedPlan = ref({
+    userId: null,
+    planId: '',
+    duration: 1
+});
+
+// Open plan modal
+const openPlanModal = (user) => {
+    selectedPlan.value = {
+        userId: user.id,
+        planId: '',
+        duration: 1
+    };
+    showPlanModal.value = true;
+};
+
+// Close plan modal
+const closePlanModal = () => {
+    showPlanModal.value = false;
+    selectedPlan.value = {
+        userId: null,
+        planId: '',
+        duration: 1
+    };
+};
+
+// Assign plan to user
+const assignPlan = () => {
+    console.log('Assigning plan:', selectedPlan.value); // Debug log
+    
+    router.post(route('admin.users.assign-plan'), selectedPlan.value, {
+        preserveScroll: true,
+        onSuccess: () => {
+            toast.success('Plan assigned successfully');
+            closePlanModal();
+            router.reload({ only: ['users'] });
+        },
+        onError: (errors) => {
+            console.error('Error:', errors); // Debug log
+            if (errors.error) {
+                toast.error(errors.error);
+            } else {
+                toast.error('Failed to assign plan');
+            }
         }
     });
 };

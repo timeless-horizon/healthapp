@@ -168,6 +168,7 @@ Route::middleware(['auth'])->group(function () {
                 return "Error: " . $e->getMessage();
             }
         });
+        Route::post('/admin/users/assign-plan', [UserController::class, 'assignPlan'])->name('admin.users.assign-plan');
     });
 });
 
