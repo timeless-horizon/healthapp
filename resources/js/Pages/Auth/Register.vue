@@ -9,6 +9,7 @@
                 <h2 class="text-2xl font-semibold mb-4">Sign Up Form</h2>
 
                 <form @submit.prevent="submitForm">
+                    <input type="hidden" v-model="form.ref">
                     <div v-if="currentStep === 1">
                         <h3 class="text-xl font-bold mb-3">User Profile Information</h3>
                         <div class="flex flex-col md:flex-row items-center gap-2 mb-4 w-full">
@@ -208,6 +209,10 @@ const loading = ref(false);
 const showPassword = ref(false);
 const showConfirmPassword = ref(false);
 
+const props = defineProps({
+    refCode: String
+});
+
 const form = reactive({
     surname: '',
     otherNames: '',
@@ -223,6 +228,9 @@ const form = reactive({
     gender: '',
     dateOfBirth: '',
     termsAccepted: false,
+    country: '',
+    state: '',
+    ref: props.refCode
 });
 const selectedCountry = ref('');
 const selectedState = ref('');

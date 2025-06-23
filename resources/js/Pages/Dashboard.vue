@@ -16,6 +16,8 @@ onMounted(() => {
         window.location.href = '/doctor-dashboard-overview';
     } else if (props.auth.user.user_role === 'patient') {
         window.location.href = '/patient-dashboard-overview';
+    } else if (props.auth.user.user_role === 'nurse') {
+        window.location.href = '/nurse-dashboard';
     }
 });
 

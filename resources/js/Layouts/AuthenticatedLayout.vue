@@ -18,6 +18,8 @@
 
             <DoctorsSideBar :doctorLinks="doctorLinks" v-else-if="page.props.auth.user.user_role === 'doctor'" />
 
+            <NurseSideBar :nurseLinks="nurseLinks" v-else-if="page.props.auth.user.user_role === 'nurse'" />
+
             <PatientSideBar :patientLinks="patientLinks" :planHasExpired="planHasExpired" v-else />
             <Logout />
         </div>
@@ -46,6 +48,7 @@ import Logout from "@/Components/Logout.vue";
 import DoctorsSideBar from "@/Components/DoctorsSideBar.vue";
 import PatientSideBar from "@/Components/PatientSideBar.vue";
 import AdminSideBar from "@/Components/AdminSideBar.vue";
+import NurseSideBar from "@/Components/NurseSideBar.vue";
 import { ref, onMounted } from "vue";
 import axios from "axios";
 import Plans from "@/Components/Plans.vue";
@@ -146,11 +149,6 @@ const patientLinks = ref([
     }
 ]);
 const adminLinks = ref([
-    // {
-    //     name: "admin-all-dashboard",
-    //     active: false,
-    //     icon: `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 3v6.75h6.75V3H3.75zm0 10.5V21h6.75v-6.75H3.75zm10.5-10.5V21h6.75V3h-6.75zM14.25 14.25v6.75h6.75v-6.75h-6.75z" /></svg>`
-    // },
     {
         name: "admin-fetch-appointments",
         active: false,
@@ -176,15 +174,25 @@ const adminLinks = ref([
         active: false,
         icon: `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6"><path stroke-linecap="round" stroke-linejoin="round" d="M3 12h18M3 16.5h18M3 7.5h18" /></svg>`
     },
-    // {
-    //     name: "admin-all-transactions",
-    //     active: false,
-    //     icon: `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 4.5h15m0 0v15m0-15l-15 15" /></svg>`
-    // },
     {
         name: "admin-add-department",
         active: false,
         icon: `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" /></svg>`
+    },
+    {
+        name: "admin-referral",
+        active: false,
+        icon: `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6"><path stroke-linecap="round" stroke-linejoin="round" d="M13.19 8.688a4.5 4.5 0 011.242 7.244l-4.5 4.5a4.5 4.5 0 01-6.364-6.364l1.757-1.757m13.35-.622l1.757-1.757a4.5 4.5 0 00-6.364-6.364l-4.5 4.5a4.5 4.5 0 001.242 7.244" /></svg>`
+    }
+]);
+const nurseLinks = ref([
+    {
+        name: "nurse-dashboard",
+        icon: `<svg xmlns=\"http://www.w3.org/2000/svg\" fill=\"none\" viewBox=\"0 0 24 24\" stroke-width=\"1.5\" stroke=\"currentColor\" class=\"w-6 h-6\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" d=\"M3.75 3v6.75h6.75V3H3.75zm0 10.5V21h6.75v-6.75H3.75zm10.5-10.5V21h6.75V3h-6.75zM14.25 14.25v6.75h6.75v-6.75h-6.75z\" /></svg>`
+    },
+    {
+        name: "nurse-follow-up",
+        icon: `<svg xmlns=\"http://www.w3.org/2000/svg\" fill=\"none\" viewBox=\"0 0 24 24\" stroke-width=\"1.5\" stroke=\"currentColor\" class=\"w-6 h-6\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" d=\"M12 6v6l4 2\" /></svg>`
     }
 ]);
 const isSidebarOpen = ref(false);

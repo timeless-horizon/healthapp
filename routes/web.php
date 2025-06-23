@@ -26,6 +26,7 @@ use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\UserController;
+use \App\Http\Controllers\ReferralController;
 
 Route::get('/', function () {
     return Inertia::render('Welcome', [
@@ -170,6 +171,25 @@ Route::middleware(['auth'])->group(function () {
         });
         Route::post('/admin/users/assign-plan', [UserController::class, 'assignPlan'])->name('admin.users.assign-plan');
     });
+
+    // Nurse's Links >>>>>>>>>>>>>>>>>>>>>>
+    Route::middleware(['auth', 'verified', RoleMiddleware::class . ':nurse'])->group(function () {
+        Route::get('/nurse-dashboard', [\App\Http\Controllers\NurseController::class, 'dashboard'])->name('nurse.dashboard');
+        Route::get('/nurse-follow-up', function () {
+            // You can pass patient data here if needed
+            return Inertia::render('Nurse/FollowUp');
+        })->name('nurse.followup');
+    });
+
+    // Referral System Routes
+    Route::middleware(['auth'])->group(function () {
+        Route::get('/admin-referral', [ReferralController::class, 'index'])->name('admin.referral.index');
+        Route::post('/admin/referral/generate', [ReferralController::class, 'generateCode'])->name('admin.referral.generate');
+        Route::delete('/admin/referral/{id}', [ReferralController::class, 'destroy'])->name('admin.referral.destroy');
+    });
+
+    // Public referral tracking route
+    Route::get('/r/{code}', [ReferralController::class, 'trackClick'])->name('referral.track');
 });
 
 // Route::get('/change-password11', function () {
