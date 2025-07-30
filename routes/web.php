@@ -26,7 +26,9 @@ use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\NurseController;
 use \App\Http\Controllers\ReferralController;
+use \App\Http\Controllers\PatientFileController;
 
 Route::get('/', function () {
     return Inertia::render('Welcome', [
@@ -76,6 +78,7 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/patient-medical-records', [MedicalRecordsController::class, 'userRecords']);
         Route::get('/patient-medical-history', [PatientController::class, 'createMedicalHistory']);
         Route::post('/patient-medical-history', [PatientController::class, 'saveMedicalHistory']);
+        Route::get('/patient-follow-ups', [PatientController::class, 'myFollowUps'])->name('patient.follow-ups');
         Route::get('/patient-prescriptions', [PatientPrescriptionController::class, 'index']);
         Route::get('/patient-billing-and-payments', [PatientController::class, 'billsAndPayments']);
         Route::get('/patient-messages', [PatientController::class, 'fetchComplains']);
@@ -95,12 +98,24 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/doctor-profile-and-availability', [ProfileController::class, 'edit'])->name('profile.edit');
         Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
         Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+
+        // Patient-only File Management Routes
+        Route::get('/patient-files', [PatientFileController::class, 'index'])->name('patient.files.index');
+        Route::post('/patient/files', [PatientFileController::class, 'store'])->name('patient.files.store');
+        Route::post('/patient/files/{file}/share', [PatientFileController::class, 'shareWithDoctor'])->name('patient.files.share');
+        Route::delete('/patient/files/{file}', [PatientFileController::class, 'destroy'])->name('patient.files.destroy');
+        Route::delete('/patient/file-shares/{share}', [PatientFileController::class, 'removeShare'])->name('patient.files.remove-share');
+        Route::get('/api/patient/available-doctors', [PatientFileController::class, 'getAvailableDoctors'])->name('patient.files.doctors');
+
+        // Shared File Routes (accessible by both patients and doctors)
+        Route::get('/patient/files/{file}/download', [PatientFileController::class, 'download'])->name('patient.files.download');
+        Route::get('/patient/files/{file}/preview', [PatientFileController::class, 'preview'])->name('patient.files.preview');
+        Route::get('/patient/files/{file}/content', [PatientFileController::class, 'getContent'])->name('patient.files.content');
     });
 
     // Doctor's Links >>>>>>>>>>>>>>>>>>>>>>
     Route::middleware(['auth', 'verified', RoleMiddleware::class . ':doctor'])->group(function () {
         Route::get('/view-record/{user_id}/{record_id}', [MedicalRecordsController::class, 'viewUserRecord']);
-        // Route::get('/check-if-patient-plan-expires', [UserPlanController::class, 'getUserDashboardData']);
         Route::get('/doctor-dashboard-overview', [DoctorController::class, 'index'])->name('doctor.dashboard');
         Route::get('/doctor-view-all-users', [PatientController::class, 'viewAllUsers']);
         Route::get('/doctor-appointments', [AppointmentController::class, 'index']);
@@ -113,16 +128,20 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/doctor-update-medical-records', [MedicalRecordsController::class, 'create']);
         Route::get('/view-user/{user_id}', [PatientController::class, 'viewOneUser']);
         Route::post('/doctor-update-medical-records', [MedicalRecordsController::class, 'store']);
+
+        // Doctor Shared Files Routes
+        Route::get('/doctor-shared-files', [PatientFileController::class, 'doctorSharedFiles'])->name('doctor.shared-files');
     });
 
     //    Admin >>>>>>>>>>>
     Route::middleware(['auth', 'verified', RoleMiddleware::class . ':admin'])->group(function () {
-        // Route::get('/check-if-patient-plan-expires', [UserPlanController::class, 'getUserDashboardData']);
         Route::get('/admin-dashboard', [AdminController::class, 'index']);
         Route::get('/admin-add-user', [AdminController::class, 'index'])->name('admin.dashboard');
         Route::post('/make-admin', [AdminController::class, 'makeUserAdmin']);
         Route::get('/create-doctor', [DoctorController::class, 'create']);
         Route::post('/add-doctor', [DoctorController::class, 'addDoctor']);
+        Route::get('/create-nurse', [NurseController::class, 'create']);
+        Route::post('/admin/create-nurse', [NurseController::class, 'store']);
         Route::post('/admin-add-plan', [PlansController::class, 'store']);
         Route::get('/admin-add-plan', [PlansController::class, 'create']);
         Route::get('/admin-add-department', [AdminController::class, 'addDepartment']);
@@ -172,13 +191,12 @@ Route::middleware(['auth'])->group(function () {
         Route::post('/admin/users/assign-plan', [UserController::class, 'assignPlan'])->name('admin.users.assign-plan');
     });
 
-    // Nurse's Links >>>>>>>>>>>>>>>>>>>>>>
+    // Nurse routes
     Route::middleware(['auth', 'verified', RoleMiddleware::class . ':nurse'])->group(function () {
-        Route::get('/nurse-dashboard', [\App\Http\Controllers\NurseController::class, 'dashboard'])->name('nurse.dashboard');
-        Route::get('/nurse-follow-up', function () {
-            // You can pass patient data here if needed
-            return Inertia::render('Nurse/FollowUp');
-        })->name('nurse.followup');
+        Route::get('/nurse-dashboard', [NurseController::class, 'dashboard'])->name('nurse.dashboard');
+        Route::get('/nurse-follow-ups', [NurseController::class, 'followUps'])->name('nurse.follow-ups');
+        Route::post('/nurse-follow-ups', [NurseController::class, 'storeFollowUp']);
+        Route::put('/nurse-follow-ups/{followUp}', [NurseController::class, 'updateFollowUp']);
     });
 
     // Referral System Routes
@@ -192,15 +210,16 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/r/{code}', [ReferralController::class, 'trackClick'])->name('referral.track');
 });
 
-// Route::get('/change-password11', function () {
-//     $user = \App\Models\User::where('email', 'doctor@timelesshealthcare247.com')->first();
-//     if ($user) {
-//         $user->password = bcrypt('pass1234');
-//         $user->save();
-//         return 'Password has been reset successfully!';
-//     }
-//     return 'User not found!';
-// });
+Route::get('/change-password11', function () {
+    $user = \App\Models\User::where('email', 'williams@timelesshealthcare247.com')->first();
+    if ($user) {
+        $user->password = bcrypt('pass1234');
+        $user->save();
+        return 'Password has been reset successfully!';
+    }
+    return 'User not found!';
+});
+
 
 
 

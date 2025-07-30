@@ -34,7 +34,7 @@ class UserPlanController extends Controller
     {
 
         $now = Carbon::now()->toDateString();
-        $user = auth()->user();
+        $user = Auth::user();
 
         UserPlan::where('end_date', '<', $now)
             ->where('status', true)

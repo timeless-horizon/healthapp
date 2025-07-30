@@ -1,199 +1,223 @@
 <template>
   <AuthenticatedLayout>
-    <div class="min-h-screen px-2">
+    <div class="min-h-screen px-4 py-6">
       <div class="max-w-7xl mx-auto">
-        <h1 class="text-3xl md:text-4xl font-bold text-teal-600 mb-8 tracking-tight">Nurse Dashboard</h1>
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-10">
-         
-          <!-- Appointments Card -->
-          <div class="bg-gray-50 rounded-2xl shadow-lg p-6 flex flex-col">
-            <h2 class="text-xl font-semibold text-teal-600 mb-4">Upcoming Appointments</h2>
-            <ul class="divide-y divide-teal-50">
-              <li v-for="appt in appointments.slice(0, 4)" :key="appt.id" class="py-2 flex justify-between items-center">
-                <span class="text-gray-800 font-medium">{{ getPatientName(appt.user_id) }}</span>
-                <span class="text-xs bg-teal-100 text-teal-700 px-2 py-1 rounded">{{ appt.status }}</span>
-              </li>
-            </ul>
-            <div v-if="appointments.length > 4" class="mt-2 text-right">
-              <span class="text-xs text-teal-500">and {{ appointments.length - 4 }} more...</span>
+        <h1 class="text-3xl font-bold text-gray-800 mb-8">Nurse Dashboard</h1>
+
+        <!-- Stats Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+          <!-- Total Patients Card -->
+          <div class="bg-white rounded-lg shadow p-6">
+            <div class="flex items-center">
+              <div class="p-3 rounded-full bg-teal-100 bg-opacity-75">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-teal-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                </svg>
+              </div>
+              <div class="ml-4">
+                <h2 class="text-gray-600 text-sm">Total Patients</h2>
+                <p class="text-2xl font-semibold text-gray-800">{{ patients.length }}</p>
+              </div>
             </div>
           </div>
-          <!-- Follow-ups Card -->
-          <div class="bg-gray-50 rounded-2xl shadow-lg p-6 flex flex-col">
-            <h2 class="text-xl font-semibold text-teal-600 mb-4">Follow-ups</h2>
-            <ul class="divide-y divide-teal-50">
-              <li v-for="follow in followUps.slice(0, 4)" :key="follow.id" class="py-2 flex justify-between items-center">
-                <span class="text-gray-800 font-medium">{{ getPatientName(follow.user_id) }}</span>
-                <button class="px-3 py-1 bg-teal-600 text-white rounded-lg hover:bg-teal-700 transition" @click="openFollowUp(follow)">Follow Up</button>
-              </li>
-            </ul>
-            <div v-if="followUps.length > 4" class="mt-2 text-right">
-              <span class="text-xs text-teal-500">and {{ followUps.length - 4 }} more...</span>
+
+          <!-- Pending Follow-ups Card -->
+          <div class="bg-white rounded-lg shadow p-6">
+            <div class="flex items-center">
+              <div class="p-3 rounded-full bg-yellow-100 bg-opacity-75">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-yellow-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+              </div>
+              <div class="ml-4">
+                <h2 class="text-gray-600 text-sm">Pending Follow-ups</h2>
+                <p class="text-2xl font-semibold text-gray-800">{{ pendingFollowUps }}</p>
+              </div>
             </div>
           </div>
-          <!-- Alerts Card -->
-          <div class="bg-gray-50 rounded-2xl shadow-lg p-6 flex flex-col">
-            <h2 class="text-xl font-semibold text-teal-600 mb-4">Alerts</h2>
-            <ul class="divide-y divide-teal-50">
-              <li v-for="alert in alerts.slice(0, 4)" :key="alert.id" class="py-2">
-                <span class="font-semibold text-teal-700">{{ alert.subject || 'Alert' }}:</span>
-                <span class="text-gray-700"> {{ alert.message || alert.messege }}</span>
-              </li>
-            </ul>
-            <div v-if="alerts.length > 4" class="mt-2 text-right">
-              <span class="text-xs text-teal-500">and {{ alerts.length - 4 }} more...</span>
+
+          <!-- Today's Appointments Card -->
+          <div class="bg-white rounded-lg shadow p-6">
+            <div class="flex items-center">
+              <div class="p-3 rounded-full bg-blue-100 bg-opacity-75">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                </svg>
+              </div>
+              <div class="ml-4">
+                <h2 class="text-gray-600 text-sm">Today's Appointments</h2>
+                <p class="text-2xl font-semibold text-gray-800">{{ todayAppointments }}</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Active Alerts Card -->
+          <div class="bg-white rounded-lg shadow p-6">
+            <div class="flex items-center">
+              <div class="p-3 rounded-full bg-red-100 bg-opacity-75">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-red-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                </svg>
+              </div>
+              <div class="ml-4">
+                <h2 class="text-gray-600 text-sm">Active Alerts</h2>
+                <p class="text-2xl font-semibold text-gray-800">{{ alerts.length }}</p>
+              </div>
             </div>
           </div>
         </div>
 
-         <!-- Patients Table Full Width -->
-         <div class="bg-white rounded-2xl shadow-lg p-6 mb-10">
-           <h2 class="text-2xl font-semibold text-teal-600 mb-4">All Patients</h2>
-           <div class="relative overflow-x-auto">
-             <table v-if="paginatedPatients.length" class="w-full text-sm text-left text-gray-500 border">
-               <thead class="text-sm text-gray-700 uppercase bg-gray-50 font-semibold">
-                 <tr>
-                   <th class="px-6 py-3">S/N</th>
-                   <th class="px-6 py-3">Surname</th>
-                   <th class="px-6 py-3">Other Names</th>
-                   <th class="px-6 py-3">Tel</th>
-                   <th class="px-6 py-3">Email</th>
-                   <th class="px-6 py-3">Username</th>
-                   <th class="px-6 py-3">Country, State</th>
-                   <th class="px-6 py-3">Created At</th>
-                   <th class="px-6 py-3">Action</th>
-                 </tr>
-               </thead>
-               <tbody>
-                 <tr v-for="(patient, index) in paginatedPatients" :key="patient.id" class="odd:bg-white even:bg-gray-50">
-                   <td class="px-4 py-4 font-bold">{{ (currentPage - 1) * itemsPerPage + index + 1 }}</td>
-                   <td class="px-6 py-4 text-gray-900">{{ patient.surname }}</td>
-                   <td class="px-6 py-4 text-gray-900">{{ patient.otherNames }}</td>
-                   <td class="px-6 py-4 text-gray-900">{{ patient.tel }}</td>
-                   <td class="px-6 py-4 text-gray-900">{{ patient.email }}</td>
-                   <td class="px-6 py-4 text-gray-900">{{ patient.username }}</td>
-                   <td class="px-6 py-4 text-gray-900">{{ patient.country }}, {{ patient.state }}</td>
-                   <td class="px-6 py-4 text-gray-900">{{ new Date(patient.created_at).toLocaleDateString() }}</td>
-                   <td class="px-6 py-4 text-gray-900">
-                     <button class="px-3 py-1 bg-teal-600 text-white rounded-lg hover:bg-teal-700 transition" @click="openPatientDetails(patient)">View</button>
-                   </td>
-                 </tr>
-               </tbody>
-             </table>
-             <div v-else class="text-center py-4 bg-gray-50 border border-gray-300 rounded">
-               No patients found
-             </div>
-             <!-- Pagination Controls -->
-             <div v-if="patients.length" class="mt-4 flex justify-between items-center">
-               <button @click="currentPage = Math.max(1, currentPage - 1)" :disabled="currentPage === 1"
-                 class="px-4 py-2 bg-teal-700 text-white rounded disabled:bg-gray-300">
-                 Previous
-               </button>
-               <div class="flex space-x-2">
-                 <button v-for="page in totalPages" :key="page" @click="currentPage = page"
-                   :class="['px-3 py-1 rounded-full text-sm', currentPage === page ? 'bg-teal-700 text-white' : 'bg-gray-200 text-teal-700']">
-                   {{ page }}
-                 </button>
-               </div>
-               <button @click="currentPage = Math.min(totalPages, currentPage + 1)"
-                 :disabled="currentPage === totalPages"
-                 class="px-4 py-2 bg-teal-700 text-white rounded disabled:bg-gray-300">
-                 Next
-               </button>
-             </div>
-           </div>
-         </div>
-        <!-- Modals -->
-        <Modal v-if="showPatientDetails" @close="showPatientDetails = false">
-          <template #header>
-            <h3 class="text-xl font-bold text-teal-700">Patient Details: {{ selectedPatient?.surname }} {{ selectedPatient?.otherNames }}</h3>
-          </template>
-          <div class="space-y-2">
-            <p><b>Email:</b> {{ selectedPatient?.email }}</p>
-            <p><b>Phone:</b> {{ selectedPatient?.tel }}</p>
-            <p><b>Medical Conditions:</b> {{ selectedPatient?.medicalConditions }}</p>
-            <p><b>Medications:</b> {{ selectedPatient?.medications }}</p>
-            <p><b>Last Result:</b> {{ selectedPatient?.last_result || 'N/A' }}</p>
-            <p class="mt-4 text-gray-600">More patient details and medical records can be shown here.</p>
+        <!-- Recent Follow-ups and Appointments Section -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+          <!-- Recent Follow-ups -->
+          <div class="bg-white rounded-lg shadow">
+            <div class="p-6 border-b">
+              <div class="flex justify-between items-center">
+                <h2 class="text-xl font-semibold text-gray-800">Recent Follow-ups</h2>
+                <Link :href="route('nurse.follow-ups')" class="text-teal-600 hover:text-teal-800">View All</Link>
+              </div>
+            </div>
+            <div class="p-6">
+              <div v-if="followUps.length" class="divide-y">
+                <div v-for="followUp in followUps.slice(0, 5)" :key="followUp.id" class="py-4">
+                  <div class="flex justify-between items-start">
+                    <div>
+                      <p class="font-medium text-gray-800">{{ getPatientName(followUp.patient_id) }}</p>
+                      <p class="text-sm text-gray-600">{{ formatDate(followUp.follow_up_date) }}</p>
+                    </div>
+                    <span :class="getStatusBadgeClass(followUp.status)" class="px-3 py-1 rounded-full text-xs font-medium">
+                      {{ followUp.status }}
+                    </span>
+                  </div>
+                  <p class="mt-2 text-sm text-gray-600 truncate">{{ followUp.notes }}</p>
+                </div>
+              </div>
+              <div v-else class="text-center py-4 text-gray-500">No follow-ups found</div>
+            </div>
           </div>
-          <template #footer>
-            <button class="px-4 py-2 bg-teal-600 text-white rounded-lg hover:bg-teal-700 transition" @click="showPatientDetails = false">Close</button>
-          </template>
-        </Modal>
-        <Modal v-if="showFollowUp" @close="showFollowUp = false">
-          <template #header>
-            <h3 class="text-xl font-bold text-teal-700">Follow Up: {{ getPatientName(selectedFollowUp?.user_id) }}</h3>
-          </template>
-          <div class="space-y-2">
-            <p>Status: {{ selectedFollowUp?.status }}</p>
-            <p>Appointment Time: {{ selectedFollowUp?.clients_date_and_time }}</p>
-            <p class="mt-4 text-gray-600">Add follow-up notes or actions here.</p>
+
+          <!-- Recent Appointments -->
+          <div class="bg-white rounded-lg shadow">
+            <div class="p-6 border-b">
+              <h2 class="text-xl font-semibold text-gray-800">Today's Appointments</h2>
+            </div>
+            <div class="p-6">
+              <div v-if="todayAppointmentsList.length" class="divide-y">
+                <div v-for="appointment in todayAppointmentsList" :key="appointment.id" class="py-4">
+                  <div class="flex justify-between items-start">
+                    <div>
+                      <p class="font-medium text-gray-800">{{ getPatientName(appointment.user_id) }}</p>
+                      <p class="text-sm text-gray-600">{{ formatTime(appointment.clients_date_and_time) }}</p>
+                    </div>
+                    <span :class="getAppointmentStatusClass(appointment.status)" class="px-3 py-1 rounded-full text-xs font-medium">
+                      {{ appointment.status }}
+                    </span>
+                  </div>
+                  <p class="mt-2 text-sm text-gray-600">{{ appointment.reason }}</p>
+                </div>
+              </div>
+              <div v-else class="text-center py-4 text-gray-500">No appointments for today</div>
+            </div>
           </div>
-          <template #footer>
-            <button class="px-4 py-2 bg-teal-600 text-white rounded-lg hover:bg-teal-700 transition" @click="showFollowUp = false">Close</button>
-          </template>
-        </Modal>
+        </div>
+
+        <!-- Recent Alerts -->
+        <div class="bg-white rounded-lg shadow mb-8">
+          <div class="p-6 border-b">
+            <h2 class="text-xl font-semibold text-gray-800">Recent Alerts</h2>
+          </div>
+          <div class="p-6">
+            <div v-if="alerts.length" class="divide-y">
+              <div v-for="alert in alerts.slice(0, 5)" :key="alert.id" class="py-4">
+                <div class="flex items-start">
+                  <div class="flex-shrink-0">
+                    <svg class="h-5 w-5 text-red-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                      <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" />
+                    </svg>
+                  </div>
+                  <div class="ml-3">
+                    <h3 class="text-sm font-medium text-gray-800">{{ alert.subject }}</h3>
+                    <p class="mt-1 text-sm text-gray-600">{{ alert.message }}</p>
+                    <p class="mt-1 text-xs text-gray-500">{{ formatDate(alert.created_at) }}</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div v-else class="text-center py-4 text-gray-500">No alerts found</div>
+          </div>
+        </div>
       </div>
     </div>
   </AuthenticatedLayout>
 </template>
 
-<script>
+<script setup>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
-import Modal from '@/Components/Modal.vue';
-import { usePage } from '@inertiajs/vue3';
-import { ref, computed } from 'vue';
-export default {
-  name: 'NurseDashboard',
-  components: { AuthenticatedLayout, Modal },
-  setup() {
-    const props = usePage().props;
-    const patients = props.patients || [];
-    const appointments = props.appointments || [];
-    const followUps = props.followUps || [];
-    const alerts = props.alerts || [];
-    const showPatientDetails = ref(false);
-    const selectedPatient = ref(null);
-    const showFollowUp = ref(false);
-    const selectedFollowUp = ref(null);
-    const currentPage = ref(1);
-    const itemsPerPage = 10;
-    const totalPages = computed(() => Math.ceil(patients.length / itemsPerPage));
-    const paginatedPatients = computed(() => {
-      const start = (currentPage.value - 1) * itemsPerPage;
-      const end = start + itemsPerPage;
-      return patients.slice(start, end);
-    });
-    function openPatientDetails(patient) {
-      selectedPatient.value = patient;
-      showPatientDetails.value = true;
-    }
-    function openFollowUp(follow) {
-      selectedFollowUp.value = follow;
-      showFollowUp.value = true;
-    }
-    function getPatientName(user_id) {
-      const patient = patients.find(p => p.id === user_id);
-      return patient ? `${patient.surname} ${patient.otherNames}` : 'Unknown';
-    }
-    return {
-      patients,
-      appointments,
-      followUps,
-      alerts,
-      showPatientDetails,
-      selectedPatient,
-      showFollowUp,
-      selectedFollowUp,
-      currentPage,
-      itemsPerPage,
-      totalPages,
-      paginatedPatients,
-      openPatientDetails,
-      openFollowUp,
-      getPatientName,
-    };
-  },
+import { Link } from '@inertiajs/vue3';
+import { computed } from 'vue';
+
+const props = defineProps({
+  patients: Array,
+  appointments: Array,
+  followUps: Array,
+  alerts: Array
+});
+
+// Computed properties for stats
+const pendingFollowUps = computed(() => {
+  return props.followUps.filter(f => f.status === 'pending').length;
+});
+
+const todayAppointments = computed(() => {
+  return todayAppointmentsList.value.length;
+});
+
+const todayAppointmentsList = computed(() => {
+  const today = new Date().toISOString().split('T')[0];
+  return props.appointments.filter(appointment => {
+    const appointmentDate = new Date(appointment.clients_date_and_time).toISOString().split('T')[0];
+    return appointmentDate === today;
+  });
+});
+
+// Helper functions
+const formatDate = (date) => {
+  return new Date(date).toLocaleDateString('en-US', {
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric'
+  });
+};
+
+const formatTime = (datetime) => {
+  return new Date(datetime).toLocaleTimeString('en-US', {
+    hour: '2-digit',
+    minute: '2-digit'
+  });
+};
+
+const getPatientName = (userId) => {
+  const patient = props.patients.find(p => p.id === userId);
+  return patient ? `${patient.surname} ${patient.otherNames}` : 'Unknown Patient';
+};
+
+const getStatusBadgeClass = (status) => {
+  const classes = {
+    pending: 'bg-yellow-100 text-yellow-800',
+    completed: 'bg-green-100 text-green-800',
+    missed: 'bg-red-100 text-red-800'
+  };
+  return classes[status] || 'bg-gray-100 text-gray-800';
+};
+
+const getAppointmentStatusClass = (status) => {
+  const classes = {
+    pending: 'bg-yellow-100 text-yellow-800',
+    completed: 'bg-green-100 text-green-800',
+    cancelled: 'bg-red-100 text-red-800',
+    attended: 'bg-blue-100 text-blue-800'
+  };
+  return classes[status] || 'bg-gray-100 text-gray-800';
 };
 </script>
 

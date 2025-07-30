@@ -78,6 +78,29 @@ class User extends Authenticatable implements MustVerifyEmail
         return $this->currentPlan?->status;
     }
 
+    // Patient file relationships
+    public function patientFiles()
+    {
+        return $this->hasMany(PatientFile::class, 'user_id');
+    }
+
+    public function activePatientFiles()
+    {
+        return $this->hasMany(PatientFile::class, 'user_id')->where('is_active', true);
+    }
+
+    // Files shared with this user (when they are a doctor)
+    public function sharedFiles()
+    {
+        return $this->hasMany(PatientFileShare::class, 'doctor_id')->valid();
+    }
+
+    // Files this user shared (when they are a patient)
+    public function mySharedFiles()
+    {
+        return $this->hasMany(PatientFileShare::class, 'patient_id');
+    }
+
 
     /**
      * The attributes that should be hidden for serialization.

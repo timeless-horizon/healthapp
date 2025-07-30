@@ -13,6 +13,23 @@ return new class extends Migration
     {
         Schema::create('follow_ups', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('appointment_id')
+                ->constrained('appointments')
+                ->cascadeOnDelete()
+                ->cascadeOnUpdate();
+            $table->foreignId('patient_id')
+                ->constrained('users')
+                ->cascadeOnDelete()
+                ->cascadeOnUpdate();
+            $table->foreignId('nurse_id')
+                ->constrained('users')
+                ->cascadeOnDelete()
+                ->cascadeOnUpdate();
+            $table->text('notes');
+            $table->enum('status', ['pending', 'completed', 'missed'])->default('pending');
+            $table->dateTime('follow_up_date');
+            $table->text('action_taken')->nullable();
+            $table->text('recommendations')->nullable();
             $table->timestamps();
         });
     }
