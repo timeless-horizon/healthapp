@@ -2,10 +2,38 @@
     <AuthenticatedLayout>
         <div class="flex flex-col p-4">
             <h1 class="text-3xl font-semibold text-teal-900 mb-4">All Appointments</h1>
+            <div class="w-full flex items-start justify-between mb-4">
+                <div class="flex flex-wrap gap-4">
+                    <div class="flex flex-col">
+                        <label class="text-sm text-gray-600 mb-1">Date Range</label>
+                        <div class="flex gap-2">
+                            <input v-model="filters.startDate" type="date"
+                                class="border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-teal-600">
+                            <input v-model="filters.endDate" type="date"
+                                class="border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-teal-600">
+                        </div>
+                    </div>
+                    <div class="flex flex-col">
+                        <label class="text-sm text-gray-600 mb-1">Reason</label>
+                        <input v-model="filters.reason" type="text" placeholder="Search reason..."
+                            class="border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-teal-600">
+                    </div>
+                    <div class="flex flex-col">
+                        <label class="text-sm text-gray-600 mb-1">Status</label>
+                        <select v-model="filters.status"
+                            class="border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-teal-600">
+                            <option value="">All</option>
+                            <option value="upcoming">Upcoming</option>
+                            <option value="passed">Passed</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
             <div class="relative overflow-x-auto">
                 <table v-if="paginatedAppointments.length" class="w-full text-sm text-left text-gray-500 border">
                     <thead class="text-sm text-gray-700 uppercase bg-gray-50 font-semibold">
                         <tr>
+                            <th scope="col" class="px-6 py-3">S/N</th>
                             <th scope="col" class="px-6 py-3">Appointment Date/Time</th>
                             <th scope="col" class="px-6 py-3">Reason</th>
                             <th scope="col" class="px-6 py-3">Countdown</th>
@@ -15,6 +43,7 @@
                     <tbody>
                         <tr v-for="(appointment, index) in paginatedAppointments" :key="index"
                             class="odd:bg-white even:bg-gray-50">
+                            <td class="px-4 py-4 font-bold"> {{ (currentPage - 1) * itemsPerPage + index + 1 }}</td>
                             <td scope="row" class="px-4 py-4 font-normal text-sm text-gray-900">
                                 {{ formatDateTime(appointment.clients_date_and_time) }}
                             </td>
@@ -80,19 +109,51 @@ const props = defineProps({
     appointments: Object
 });
 
+// Filter state
+const filters = ref({
+    startDate: '',
+    endDate: '',
+    reason: '',
+    status: ''
+});
+
 // Pagination state
 const currentPage = ref(1);
 const itemsPerPage = 10;
 
+// Filtered appointments
+const filteredAppointments = computed(() => {
+    return props.appointments.filter(appointment => {
+        const appointmentDate = new Date(appointment.clients_date_and_time);
+        
+        // Date range filter
+        const matchesStartDate = !filters.value.startDate || appointmentDate >= new Date(filters.value.startDate);
+        const matchesEndDate = !filters.value.endDate || appointmentDate <= new Date(filters.value.endDate);
+        
+        // Reason filter
+        const matchesReason = !filters.value.reason || 
+            (appointment.reason && appointment.reason.toLowerCase().includes(filters.value.reason.toLowerCase()));
+        
+        // Status filter
+        const now = new Date();
+        const isUpcoming = appointmentDate > now;
+        const matchesStatus = !filters.value.status || 
+            (filters.value.status === 'upcoming' && isUpcoming) ||
+            (filters.value.status === 'passed' && !isUpcoming);
+
+        return matchesStartDate && matchesEndDate && matchesReason && matchesStatus;
+    });
+});
+
 // Computed properties for pagination
 const totalPages = computed(() => {
-    return Math.ceil(props.appointments.length / itemsPerPage);
+    return Math.ceil(filteredAppointments.value.length / itemsPerPage);
 });
 
 const paginatedAppointments = computed(() => {
     const start = (currentPage.value - 1) * itemsPerPage;
     const end = start + itemsPerPage;
-    return props.appointments.slice(start, end);
+    return filteredAppointments.value.slice(start, end);
 });
 
 // Editing state

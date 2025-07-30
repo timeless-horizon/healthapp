@@ -2,11 +2,49 @@
     <AuthenticatedLayout>
         <div class="flex flex-col p-4">
             <h1 class="text-3xl font-semibold text-teal-900 mb-4">Upcoming Appointments</h1>
+            <!-- Filter Controls -->
+            <div class="flex flex-wrap gap-4 mb-4 items-end">
+                <!-- Date Filter -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Date Filter</label>
+                    <select v-model="selectedDateFilter" class="border rounded px-2 py-1">
+                        <option value="all">All</option>
+                        <option value="today">Today</option>
+                        <option value="yesterday">Yesterday</option>
+                        <option value="thisMonth">This Month</option>
+                        <option value="lastMonth">Last Month</option>
+                        <option value="custom">Custom Range</option>
+                    </select>
+                </div>
+                <!-- Custom Date Range -->
+                <div v-if="selectedDateFilter === 'custom'" class="flex gap-2 items-end">
+                    <div>
+                        <label class="block text-xs text-gray-600">From</label>
+                        <input type="date" v-model="customStartDate" class="border rounded px-2 py-1" />
+                    </div>
+                    <div>
+                        <label class="block text-xs text-gray-600">To</label>
+                        <input type="date" v-model="customEndDate" class="border rounded px-2 py-1" />
+                    </div>
+                </div>
+                <!-- Status Filter -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Status</label>
+                    <select v-model="selectedStatusFilter" class="border rounded px-2 py-1">
+                        <option value="all">All</option>
+                        <option value="pending">Pending</option>
+                        <option value="completed">Completed</option>
+                        <option value="missed">Missed</option>
+                    </select>
+                </div>
+            </div>
             <div class="relative overflow-x-auto">
                 <table v-if="paginatedAppointments.length" class="w-full text-sm text-left text-gray-500 border">
                     <thead class="text-sm text-gray-700 uppercase bg-gray-50 font-semibold">
                         <tr>
+                            <th scope="col" class="px-6 py-3">S/N</th>
                             <th scope="col" class="px-6 py-3">Appointment Date/Time</th>
+                            <th scope="col" class="px-6 py-3">Name</th>
                             <th scope="col" class="px-6 py-3">Reason</th>
                             <th scope="col" class="px-6 py-3">Countdown</th>
                             <th scope="col" class="px-6 py-3">Action</th>
@@ -16,12 +54,18 @@
                     <tbody>
                         <tr v-for="(appointment, index) in paginatedAppointments" :key="index"
                             class="odd:bg-white even:bg-gray-50">
+                            <td class="px-4 py-4 font-bold"> {{ (currentPage - 1) * itemsPerPage + index + 1 }}</td>
+                            
                             <td scope="row" class="px-4 py-4 font-normal text-sm text-gray-900">
                                 <span v-if="appointment.clients_date_and_time !== null">
                                     {{ formatDateTime(appointment.clients_date_and_time) }}
                                 </span>
                                 <span v-else>Awaiting your Schedule</span>
                             </td>
+                            <td scope="row" class="px-6 py-4 font-normal text-sm text-gray-900 max-w-[350px]">
+                                {{ appointment.patient.surname }} {{ appointment.patient.otherNames }}
+                            </td>
+
                             <td scope="row" class="px-6 py-4 font-normal text-sm text-gray-900 max-w-[350px]">
                                 {{ appointment.reason }}
                             </td>
@@ -125,14 +169,87 @@ watch(
     { immediate: true, deep: true }
 );
 
+// Filter variables
+const selectedDateFilter = ref('all');
+const customStartDate = ref('');
+const customEndDate = ref('');
+const selectedStatusFilter = ref('all');
+
+// Helper to check if a date is today, yesterday, this month, last month
+function isToday(date) {
+    const now = new Date();
+    return date.getDate() === now.getDate() &&
+        date.getMonth() === now.getMonth() &&
+        date.getFullYear() === now.getFullYear();
+}
+function isYesterday(date) {
+    const now = new Date();
+    const yesterday = new Date(now);
+    yesterday.setDate(now.getDate() - 1);
+    return date.getDate() === yesterday.getDate() &&
+        date.getMonth() === yesterday.getMonth() &&
+        date.getFullYear() === yesterday.getFullYear();
+}
+function isThisMonth(date) {
+    const now = new Date();
+    return date.getMonth() === now.getMonth() &&
+        date.getFullYear() === now.getFullYear();
+}
+function isLastMonth(date) {
+    const now = new Date();
+    const lastMonth = new Date(now);
+    lastMonth.setMonth(now.getMonth() - 1);
+    return date.getMonth() === lastMonth.getMonth() &&
+        date.getFullYear() === lastMonth.getFullYear();
+}
+
+const filteredAppointments = computed(() => {
+    return localAppointments.value.filter(appointment => {
+        // Date filter
+        let dateMatch = true;
+        if (selectedDateFilter.value !== 'all') {
+            if (!appointment.clients_date_and_time) {
+                dateMatch = false;
+            } else {
+                const aptDate = new Date(appointment.clients_date_and_time);
+                if (selectedDateFilter.value === 'today') {
+                    dateMatch = isToday(aptDate);
+                } else if (selectedDateFilter.value === 'yesterday') {
+                    dateMatch = isYesterday(aptDate);
+                } else if (selectedDateFilter.value === 'thisMonth') {
+                    dateMatch = isThisMonth(aptDate);
+                } else if (selectedDateFilter.value === 'lastMonth') {
+                    dateMatch = isLastMonth(aptDate);
+                } else if (selectedDateFilter.value === 'custom') {
+                    if (customStartDate.value && customEndDate.value) {
+                        const start = new Date(customStartDate.value);
+                        const end = new Date(customEndDate.value);
+                        // Set end to end of day
+                        end.setHours(23,59,59,999);
+                        dateMatch = aptDate >= start && aptDate <= end;
+                    } else {
+                        dateMatch = true;
+                    }
+                }
+            }
+        }
+        // Status filter
+        let statusMatch = true;
+        if (selectedStatusFilter.value !== 'all') {
+            statusMatch = appointment.status === selectedStatusFilter.value;
+        }
+        return dateMatch && statusMatch;
+    });
+});
+
 const totalPages = computed(() => {
-    return Math.ceil(localAppointments.value.length / itemsPerPage);
+    return Math.ceil(filteredAppointments.value.length / itemsPerPage);
 });
 
 const paginatedAppointments = computed(() => {
     const start = (currentPage.value - 1) * itemsPerPage;
     const end = start + itemsPerPage;
-    return localAppointments.value.slice(start, end);
+    return filteredAppointments.value.slice(start, end);
 });
 
 const showModal = ref(false);

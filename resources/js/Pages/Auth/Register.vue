@@ -9,6 +9,7 @@
                 <h2 class="text-2xl font-semibold mb-4">Sign Up Form</h2>
 
                 <form @submit.prevent="submitForm">
+                    <input type="hidden" v-model="form.ref">
                     <div v-if="currentStep === 1">
                         <h3 class="text-xl font-bold mb-3">User Profile Information</h3>
                         <div class="flex flex-col md:flex-row items-center gap-2 mb-4 w-full">
@@ -28,7 +29,7 @@
                                 <label class="block text-gray-700">Gender</label>
                                 <select v-model="form.gender" class="bg-gray-50 w-full border-gray-300 rounded-md p-2"
                                     name="" id="">
-                                    <option selected disabled value="">Selection an option</option>
+                                    <option selected disabled value="">Select an option</option>
                                     <option value="male">Male</option>
                                     <option value="female">Female</option>
                                 </select>
@@ -168,7 +169,7 @@
                         </div>
                         <div class="mb-4 flex items-start">
                             <input type="checkbox" v-model="form.termsAccepted" class="mr-2" />
-                            <label class="text-gray-700">I agree to the terms and conditions</label>
+                            <label class="text-gray-700">I agree to the <a href="https://mega.nz/file/lb1XkQDD#gB27ksTspCbpNN52gx34siiVaYZqok7YA0BKM1fmI04" target="blank" class="underline hover:text-blue-700">terms and conditions</a> </label>
                         </div>
                         <button type="submit" :disabled="loading"
                             class="w-full bg-blue-500 text-white py-2 rounded-md hover:bg-blue-600 disabled:bg-blue-300 flex items-center justify-center disabled:cursor-not-allowed">
@@ -208,6 +209,10 @@ const loading = ref(false);
 const showPassword = ref(false);
 const showConfirmPassword = ref(false);
 
+const props = defineProps({
+    refCode: String
+});
+
 const form = reactive({
     surname: '',
     otherNames: '',
@@ -223,6 +228,9 @@ const form = reactive({
     gender: '',
     dateOfBirth: '',
     termsAccepted: false,
+    country: '',
+    state: '',
+    ref: props.refCode
 });
 const selectedCountry = ref('');
 const selectedState = ref('');
@@ -332,7 +340,8 @@ const submitForm = async () => {
         });
         toast.success('Registration successful!');
         setTimeout(() => {
-            window.location.href = '/patient-dashboard-overview';
+            window.location.href = '/dashboard';
+            // window.location.href = '/patient-dashboard-overview';
         }, 1500);
     } catch (error) {
         if (error.response && error.response.status === 422) {

@@ -49,6 +49,7 @@ const deletePlan = (planId) => {
                     <table class="w-full text-sm text-left text-gray-500 border">
                         <thead class="text-sm text-gray-700 uppercase bg-gray-50 font-semibold">
                             <tr>
+                                <th scope="col" class="px-6 py-3">S/N</th>
                                 <th scope="col" class="px-6 py-3">Name</th>
                                 <th scope="col" class="px-6 py-3">Description</th>
                                 <th scope="col" class="px-6 py-3">Created</th>
@@ -57,6 +58,7 @@ const deletePlan = (planId) => {
                         </thead>
                         <tbody>
                             <tr v-for="(plan, index) in plans" :key="index" class="odd:bg-white even:bg-gray-50">
+                                <td class="px-4 py-4 font-bold">{{ index + 1 }}</td>
                                 <td scope="row" class="px-4 py-4 font-normal text-sm text-gray-900">
                                     {{ plan.name }} Plan
                                 </td>

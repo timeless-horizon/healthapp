@@ -44,8 +44,10 @@
                 </div>
                 <div class="flex justify-end">
                     <button type="submit"
-                        class="px-4 py-2 bg-teal-500 text-white font-semibold rounded-lg shadow hover:bg-teal-600 transition">
-                        Save Record
+                        class="px-4 py-2 bg-teal-500 text-white font-semibold rounded-lg shadow hover:bg-teal-600 transition"
+                        :disabled="isSubmitting">
+                        <span v-if="isSubmitting">Saving...</span>
+                        <span v-else>Save Record</span>
                     </button>
                 </div>
             </form>
@@ -68,6 +70,8 @@ const form = ref({
     extra_notes: "",
     conducted_on: ""
 });
+
+const isSubmitting = ref(false);
 
 const resetForm = () => {
     form.value = {
@@ -104,6 +108,7 @@ const submitForm = () => {
         toast.error('Please select a Patient')
         return;
     }
+    isSubmitting.value = true;
     let data = {
         user_id: patient.value.id,
         ...form.value,
@@ -118,6 +123,9 @@ const submitForm = () => {
         })
         .catch(error => {
             toast.error(error)
+        })
+        .finally(() => {
+            isSubmitting.value = false;
         });
 };
 </script>

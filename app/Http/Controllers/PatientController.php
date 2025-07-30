@@ -19,6 +19,7 @@ use Illuminate\Http\Request;
 
 use Illuminate\Support\Facades\Auth;
 use inertia\inertia;
+use App\Models\FollowUp;
 
 class PatientController extends Controller
 {
@@ -249,6 +250,16 @@ class PatientController extends Controller
         return inertia::render('Patient/BillingAndPayments', [
             'transactions' => Invoice::orderBy('id', 'ASC')->where('user_id', $user_id)->get()
 
+        ]);
+    }
+
+    public function myFollowUps()
+    {
+        return Inertia::render('Patient/MyFollowUps', [
+            'followUps' => FollowUp::where('patient_id', Auth::id())
+                ->with(['nurse', 'appointment'])
+                ->orderBy('follow_up_date', 'desc')
+                ->get()
         ]);
     }
 

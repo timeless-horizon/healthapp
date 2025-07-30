@@ -18,6 +18,12 @@
                 <p class="text-gray-600">Access medical records and assist patients.</p>
             </Link>
 
+            <!-- Nurse Card -->
+            <Link href="/create-nurse" class="bg-white shadow-md rounded-lg p-6 text-center hover:shadow-lg transition-shadow cursor-pointer">
+                <h2 class="text-xl font-semibold text-gray-700 mb-2">Nurse</h2>
+                <p class="text-gray-600">Assist doctors and manage patient care.</p>
+            </Link>
+
             <!-- Patient Card -->
             <Link href="/create-patient" class="bg-white shadow-md rounded-lg p-6 text-center hover:shadow-lg transition-shadow cursor-pointer">
                 <h2 class="text-xl font-semibold text-gray-700 mb-2">Patient</h2>

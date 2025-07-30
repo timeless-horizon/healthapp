@@ -20,9 +20,16 @@ class Appointment extends Model
         "status",
     ];
 
+    protected $with = ['patient'];
+
     public function department()
     {
         return $this->belongsTo(Department::class, 'department_id');
     }
+
+    public function patient()
+{
+    return $this->belongsTo(User::class, 'user_id');
+}
 
 }

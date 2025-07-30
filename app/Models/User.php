@@ -3,11 +3,13 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+
+use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
-class User extends Authenticatable
+class User extends Authenticatable implements MustVerifyEmail
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory, Notifiable;
@@ -64,9 +66,39 @@ class User extends Authenticatable
         return $this->hasOne(UserPlan::class)->latestOfMany();
     }
 
+    public function activePlan()
+    {
+        return $this->hasOne(UserPlan::class)
+            ->where('status', 1)
+            ->with('plan');
+    }
+
     public function getPlanStatusAttribute()
     {
         return $this->currentPlan?->status;
+    }
+
+    // Patient file relationships
+    public function patientFiles()
+    {
+        return $this->hasMany(PatientFile::class, 'user_id');
+    }
+
+    public function activePatientFiles()
+    {
+        return $this->hasMany(PatientFile::class, 'user_id')->where('is_active', true);
+    }
+
+    // Files shared with this user (when they are a doctor)
+    public function sharedFiles()
+    {
+        return $this->hasMany(PatientFileShare::class, 'doctor_id')->valid();
+    }
+
+    // Files this user shared (when they are a patient)
+    public function mySharedFiles()
+    {
+        return $this->hasMany(PatientFileShare::class, 'patient_id');
     }
 
 

@@ -14,6 +14,7 @@
     <!-- Scripts -->
     @routes
     @vite(['resources/js/app.js'])
+    {{-- {{ Vite::useBuildDirectory('build/.vite')->withEntryPoints([ 'resources/js/app.js'])  }} --}}
     @inertiaHead
 </head>
 

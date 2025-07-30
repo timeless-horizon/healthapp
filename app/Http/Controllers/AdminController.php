@@ -53,7 +53,8 @@ class AdminController extends Controller
     public function viewAllUsers()
     {
         return Inertia::render('Admin/allUsers', [
-            'users' => User::orderBy(column: "id", direction: 'DESC')->get(),
+            'users' => User::with('activePlan.plan')->orderBy(column: "id", direction: 'DESC')->get(),
+            'plans' => Plans::orderBy(column: "id", direction: 'DESC')->get(),
         ]);
     }
 

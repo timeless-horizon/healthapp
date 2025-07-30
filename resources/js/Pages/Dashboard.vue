@@ -5,12 +5,19 @@ import { onMounted } from 'vue';
 const { props } = usePage();
 
 onMounted(() => {
+
+    if (props.email_verified === false) {
+        window.location.href = '/verify-email'; // redirect if not verified
+        return;
+    }
     if (props.auth.user.user_role === 'admin') {
         window.location.href = '/admin-dashboard';
     } else if (props.auth.user.user_role === 'doctor') {
         window.location.href = '/doctor-dashboard-overview';
     } else if (props.auth.user.user_role === 'patient') {
         window.location.href = '/patient-dashboard-overview';
+    } else if (props.auth.user.user_role === 'nurse') {
+        window.location.href = '/nurse-dashboard';
     }
 });
 

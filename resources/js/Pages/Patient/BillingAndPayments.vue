@@ -55,7 +55,9 @@
 
 <script setup>
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
-import { Link } from "../../../../.vite/deps/@inertiajs_vue3.js";
+// import { Link } from "../../../../.vite/deps/@inertiajs_vue3.js";
+import { Link } from '@inertiajs/inertia-vue3';
+
 
 let props = defineProps({
     transactions: Object
